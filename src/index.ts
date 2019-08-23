@@ -96,7 +96,7 @@ export class Scheduler extends Map<string, Job> {
       do {
         tm = this.timeouts.shift() as Timeout;
         i = this.get(tm.key);
-      } while (this.timeout.length && i && tm && i.expiry !== tm.expiry);
+      } while (this.timeouts.length && i && tm && i.expiry !== tm.expiry);
       this.timeoutItem(tm);
     }
   }

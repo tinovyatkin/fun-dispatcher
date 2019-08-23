@@ -5,8 +5,9 @@ describe('scheduler', () => {
   beforeAll(() => {
     scheduler = new Scheduler();
   });
-  afterEach(() => {
+  afterEach(done => {
     scheduler.flush();
+    setImmediate(done);
   });
 
   it('timeout should fire at least after the given delay', done => {
@@ -125,4 +126,25 @@ describe('scheduler', () => {
     scheduler.schedule('last', done, 2000);
     scheduler.flush();
   }, 500);
+
+  it('runNext', done => {
+    expect.assertions(3);
+    const fn1 = jest.fn();
+    const fn2 = jest.fn();
+    scheduler.schedule('key1', fn1, 500);
+    scheduler.schedule('key2', fn2, 700);
+    scheduler.schedule(
+      'key1',
+      () => {
+        expect(fn1).not.toHaveBeenCalled();
+        expect(fn2).toHaveBeenCalledTimes(1);
+      },
+      750
+    );
+    scheduler.schedule('key4', done, 1000);
+    scheduler.runNext();
+    setImmediate(() => {
+      expect(fn2).toHaveBeenCalledTimes(1);
+    });
+  }, 1200);
 });
