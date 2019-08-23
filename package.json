@@ -53,7 +53,19 @@
     "eslint-config-prettier": "6.1.0",
     "eslint-plugin-prettier": "3.1.0",
     "jest": "25.0.0",
+    "jest-junit": "7.0.0",
     "prettier": "1.18.2",
     "typescript": "3.5.3"
+  },
+  "jest": {
+    "collectCoverage": true,
+    "verbose": true,
+    "coverageReporters": [
+      "text",
+      "json",
+      "cobertura",
+      "lcov"
+    ],
+    "testEnvironment": "node"
   }
 }

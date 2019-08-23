@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/gh/tinovyatkin/fun-dispatcher/branch/master/graph/badge.svg)](https://codecov.io/gh/tinovyatkin/fun-dispatcher)
+
 # fun-dispatcher
 
 Tiny ES6 class to run functions after a given delay. Uses just on timer at any time and setImmediate to execute functions.
