@@ -1,0 +1,6 @@
+{
+  "eslint.validate": ["typescript"],
+  "jest.autoEnable": false,
+  "jest.runAllTestsFirst": false,
+  "typescript.referencesCodeLens.enabled": true
+}
