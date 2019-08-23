@@ -6,6 +6,10 @@ interface Timeout {
 interface Job {
   expiry: number;
   runner: () => void;
+  /**
+   * Original delay value
+   */
+  delay: number;
 }
 
 function sortByTimestamp(a: { expiry: number }, b: { expiry: number }) {
@@ -75,7 +79,7 @@ export class Scheduler extends Map<string, Job> {
    */
   schedule(key: string, runner: () => void, delay: number) {
     const expiry = Date.now() + delay;
-    this.set(key, { expiry, runner });
+    this.set(key, { expiry, runner, delay });
     this.timeouts.push({ key, expiry });
     setImmediate(() => {
       this.sortTimeouts();
