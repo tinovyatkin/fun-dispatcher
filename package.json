@@ -15,7 +15,8 @@
     "cron"
   ],
   "files": [
-    "dist/*.js"
+    "dist/*.js",
+    "dist/*.ts"
   ],
   "engines": {
     "node": ">=10.1"
