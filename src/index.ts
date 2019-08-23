@@ -82,6 +82,16 @@ export class Scheduler extends Map<string, Job> {
     });
   }
 
+  /**
+   * Executes first function waiting to be executed now
+   */
+  runNext() {
+    if (this.timeouts.length > 0) {
+      const tm = this.timeouts.shift() as Timeout;
+      this.timeoutItem(tm);
+    }
+  }
+
   delete(key: string) {
     const res = super.delete(key);
     if (this.size === 0) {
