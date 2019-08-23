@@ -55,5 +55,16 @@
     "jest": "25.0.0",
     "prettier": "1.18.2",
     "typescript": "3.5.3"
+  },
+  "jest": {
+    "collectCoverage": true,
+    "verbose": true,
+    "coverageReporters": [
+      "text",
+      "json",
+      "cobertura",
+      "lcov"
+    ],
+    "testEnvironment": "node"
   }
 }
