@@ -18,7 +18,7 @@ steps:
 - script: npm ci
   displayName: 'npm install and build'
 
-- script: node --expose-gc node_modules/jest/bin/jest --forceExit --logHeapUsage --runInBand --ci
+- script: node --expose-gc node_modules/jest/bin/jest --forceExit --logHeapUsage --runInBand --ci --reporters=default --reporters=jest-junit --runInBand
   displayName: "Run Jest"
 
 - script: npx codecov -f "./coverage/coverage-final.json" -y "./.codecov.yml" -t $(CODECOV_TOKEN)
