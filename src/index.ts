@@ -31,9 +31,17 @@ export class Scheduler extends Map<string, Job> {
 
   private sortTimeouts() {
     if (this.timeouts.length > 0) {
-      this.timeouts = this.timeouts.sort(sortByTimestamp);
+      this.timeouts = this.timeouts
+        .filter(tm => {
+          // prune removed or invalid items
+          const i = this.get(tm.key);
+          if (!i) return false;
+          return i.expiry === tm.expiry;
+        })
+        .sort(sortByTimestamp);
       // only re-schedule the timeout if the new one is later (ie. don't fire for nothing)
-      if (this.timeouts[0].expiry > this.timeoutsList.plannedTriggerTime) {
+      if (this.timeouts.length === 0) this.cleanup();
+      else if (this.timeouts[0].expiry > this.timeoutsList.plannedTriggerTime) {
         this.rescheduleNextTimeout(this.timeouts[0].expiry);
       }
     }
@@ -70,6 +78,15 @@ export class Scheduler extends Map<string, Job> {
     }
   }
 
+  private cleanup() {
+    if (this.timeoutsList.next) {
+      clearTimeout(this.timeoutsList.next);
+      this.timeoutsList.next = undefined;
+    }
+    this.timeoutsList.plannedTriggerTime = 0;
+    this.timeouts = [];
+  }
+
   /**
    * Schedules `runner` function to run after `ms` milliseconds delay
    *
@@ -90,28 +107,24 @@ export class Scheduler extends Map<string, Job> {
    * Executes first function waiting to be executed now
    */
   runNext() {
-    if (this.timeouts.length > 0) {
-      let tm: Timeout;
-      let i: Job | undefined;
-      do {
-        tm = this.timeouts.shift() as Timeout;
-        i = this.get(tm.key);
-      } while (this.timeouts.length && i && tm && i.expiry !== tm.expiry);
-      this.timeoutItem(tm);
+    // it will revalidate all timeouts
+    this.sortTimeouts();
+    switch (this.timeouts.length) {
+      case 0:
+        break;
+      case 1:
+        this.flush();
+        break;
+      default:
+        this.timeoutItem(this.timeouts.shift() as Timeout);
+        this.rescheduleNextTimeout(this.timeouts[0].expiry);
     }
   }
 
   delete(key: string) {
     const res = super.delete(key);
-    if (this.size === 0) {
-      // cleanup
-      if (this.timeoutsList.next) {
-        clearTimeout(this.timeoutsList.next);
-        this.timeoutsList.next = undefined;
-      }
-      this.timeoutsList.plannedTriggerTime = 0;
-      this.timeouts = [];
-    }
+    if (this.size === 0) this.cleanup();
+    else this.sortTimeouts();
     return res;
   }
 
@@ -121,5 +134,6 @@ export class Scheduler extends Map<string, Job> {
       const tm = this.timeouts.shift() as Timeout;
       this.timeoutItem(tm);
     }
+    this.cleanup();
   }
 }
