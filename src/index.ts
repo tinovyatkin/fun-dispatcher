@@ -70,6 +70,15 @@ export class Scheduler extends Map<string, Job> {
     }
   }
 
+  private cleanup() {
+    if (this.timeoutsList.next) {
+      clearTimeout(this.timeoutsList.next);
+      this.timeoutsList.next = undefined;
+    }
+    this.timeoutsList.plannedTriggerTime = 0;
+    this.timeouts = [];
+  }
+
   /**
    * Schedules `runner` function to run after `ms` milliseconds delay
    *
@@ -103,15 +112,7 @@ export class Scheduler extends Map<string, Job> {
 
   delete(key: string) {
     const res = super.delete(key);
-    if (this.size === 0) {
-      // cleanup
-      if (this.timeoutsList.next) {
-        clearTimeout(this.timeoutsList.next);
-        this.timeoutsList.next = undefined;
-      }
-      this.timeoutsList.plannedTriggerTime = 0;
-      this.timeouts = [];
-    }
+    if (this.size === 0) this.cleanup();
     return res;
   }
 
@@ -121,5 +122,6 @@ export class Scheduler extends Map<string, Job> {
       const tm = this.timeouts.shift() as Timeout;
       this.timeoutItem(tm);
     }
+    this.cleanup();
   }
 }
