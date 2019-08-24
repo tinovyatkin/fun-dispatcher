@@ -2,7 +2,7 @@
 
 # fun-dispatcher
 
-Tiny ES6 class to run functions after a given delay. Uses just on timer at any time and setImmediate to execute functions.
+Tiny ES6 class to run functions after a given delay. Uses just one timer at any time and `setImmediate` to execute functions.
 
 Written in Typescript, 100% test coverage, targeting current LTS Node.JS
 
