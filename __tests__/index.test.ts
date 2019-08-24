@@ -147,4 +147,17 @@ describe('scheduler', () => {
       expect(fn2).toHaveBeenCalledTimes(1);
     });
   }, 1200);
+
+  it('runNext for last item', done => {
+    expect.assertions(2);
+    const fn1 = jest.fn();
+    scheduler.schedule('key1', fn1, 500);
+    scheduler.runNext();
+    scheduler.runNext();
+    setImmediate(() => {
+      expect(fn1).toHaveBeenCalledTimes(1);
+      expect(scheduler.size).toBe(0);
+      done();
+    });
+  }, 1200);
 });
