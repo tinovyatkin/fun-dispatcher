@@ -24,4 +24,10 @@ fd.flush();
 // or just next task in line waiting for be executed
 fd.runNext()
 
+// Scheduler extends native Map class, so, all methods are available
+// like .delete to unschedule task or iteration
+for (const [task, { delay }] of fd) {
+    console.log('Task `%s` was scheduled with original delay of %d ms', task, delay);
+}
+
 ```
