@@ -21,5 +21,7 @@ fd.schedule('task2', () => {
 
 // can forcefully execute all tasks
 fd.flush();
+// or just next task in line waiting for be executed
+fd.runNext()
 
 ```
