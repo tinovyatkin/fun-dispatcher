@@ -19,7 +19,7 @@
     "dist/*.ts"
   ],
   "engines": {
-    "node": ">=10.1"
+    "node": ">=12.1"
   },
   "scripts": {
     "test": "tsc --noEmit && node --expose-gc node_modules/jest/bin/jest --detectOpenHandles --logHeapUsage --coverage",
