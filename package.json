@@ -1,6 +1,6 @@
 {
   "name": "fun-dispatcher",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "Tiny ES6 class to run functions after a given delay. Uses just on timer at any time and setImmediate to launch",
   "types": "./dist/index.d.ts",
   "main": "./dist/index.js",
