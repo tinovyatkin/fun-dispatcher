@@ -21,18 +21,18 @@ function sortByTimestamp(a: { expiry: number }, b: { expiry: number }) {
  */
 export class Scheduler extends Map<string, Job> {
   private timeouts: Timeout[] = [];
-  private timeoutsList: {
+  private readonly timeoutsList: {
     next?: NodeJS.Timeout;
     expiry?: number;
     plannedTriggerTime: number;
   } = {
-    plannedTriggerTime: 0
+    plannedTriggerTime: 0,
   };
 
   private sortTimeouts() {
     if (this.timeouts.length > 0) {
       this.timeouts = this.timeouts
-        .filter(tm => {
+        .filter((tm) => {
           // prune removed or invalid items
           const i = this.get(tm.key);
           if (!i) return false;
@@ -55,13 +55,13 @@ export class Scheduler extends Map<string, Job> {
     this.timeoutsList.next = setTimeout(() => {
       this.timeoutsList.next = undefined;
       this.timeout();
-    }, delay);
+    }, delay).unref();
   }
   private timeoutItem(item: Timeout) {
     const i = this.get(item.key);
     if (!i || i.expiry !== item.expiry) return;
     this.delete(item.key);
-    if (typeof i.runner === 'function') setImmediate(i.runner);
+    if (typeof i.runner === "function") setImmediate(i.runner).unref();
   }
   private timeout() {
     const now = Date.now();
@@ -94,19 +94,19 @@ export class Scheduler extends Map<string, Job> {
    * @param {() => void} runner - function to call
    * @param {number} delay - delay, in ms
    */
-  schedule(key: string, runner: () => void, delay: number) {
+  schedule(key: string, runner: () => void, delay: number): void {
     const expiry = Date.now() + delay;
     this.set(key, { expiry, runner, delay });
     this.timeouts.push({ key, expiry });
     setImmediate(() => {
       this.sortTimeouts();
-    });
+    }).unref();
   }
 
   /**
    * Executes first function waiting to be executed now
    */
-  runNext() {
+  runNext(): void {
     // it will revalidate all timeouts
     this.sortTimeouts();
     switch (this.timeouts.length) {
@@ -121,15 +121,18 @@ export class Scheduler extends Map<string, Job> {
     }
   }
 
-  delete(key: string) {
+  delete(key: string): boolean {
     const res = super.delete(key);
     if (this.size === 0) this.cleanup();
     else this.sortTimeouts();
     return res;
   }
 
-  // immediately consider all items in the queue to have timed out and process them
-  flush() {
+  /**
+   *  immediately consider all items in the queue to have timed out and process them
+   */
+
+  flush(): void {
     while (this.timeouts.length > 0) {
       const tm = this.timeouts.shift() as Timeout;
       this.timeoutItem(tm);
