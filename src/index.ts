@@ -100,7 +100,7 @@ export class Scheduler extends Map<string, Job> {
     this.timeouts.push({ key, expiry });
     setImmediate(() => {
       this.sortTimeouts();
-    }).unref();
+    });
   }
 
   /**
