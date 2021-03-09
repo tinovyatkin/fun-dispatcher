@@ -43,7 +43,7 @@
   },
   "homepage": "https://github.com/tinovyatkin/fun-dispatcher#readme",
   "devDependencies": {
-    "@babel/preset-env": "7.13.9",
+    "@babel/preset-env": "7.13.10",
     "@babel/preset-typescript": "7.13.0",
     "@types/jest": "26.0.20",
     "@types/node": "12.20.4",
